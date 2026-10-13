@@ -1,5 +1,9 @@
 # The Little Herb Garden
 
+## Team Members
+- Gayathri Devi Shalini Dileep (@gayathridsd18-wq)
+- Sobin Karakkunnummel (@Sobink06)
+
 A small website for day 1 of **Frontend Development**.
 
 It is broken. Your job is to find out why, and to repair it.
