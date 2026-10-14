@@ -13,7 +13,7 @@ function slugify(text) {
 
 function renderHerbs(herbs) {
   listEl.innerHTML = "";
-
+  
   if (countEl) {
     countEl.textContent = `${herbs.length} herbs available.`;
   }
@@ -29,9 +29,9 @@ function renderHerbs(herbs) {
     li.className = "card";
     li.innerHTML = `
       <h3><a href="#${slug}" class="herb-card-link">${herb.name}</a></h3>
-      <p class="botanical"><em>${herb.botanical || ""}</em></p>
-      <p>${herb.uses || ""}</p>
-      <span class="tag">${herb.cycle || ""}</span>
+      <p class="botanical"><em>${herb.latin || herb.botanical || ""}</em></p>
+      <p>${herb.use || herb.uses || ""}</p>
+      <span class="tag">${herb.life || herb.cycle || ""}</span>
     `;
     listEl.appendChild(li);
   });
@@ -63,8 +63,8 @@ async function loadHerbDetail(slug) {
 
     detailContent.innerHTML = `
       <h1>${herb.name}</h1>
-      <p><em>${herb.botanical || ""}</em> &bull; <strong>${herb.cycle || ""}</strong></p>
-
+      <p><em>${herb.latin || herb.botanical || ""}</em> &bull; <strong>${herb.life || herb.cycle || ""}</strong></p>
+      
       <section style="margin-top: 1.5rem;">
         <h2>About</h2>
         <p>${herb.description || "No general description recorded."}</p>
@@ -72,7 +72,7 @@ async function loadHerbDetail(slug) {
 
       <section style="margin-top: 1rem;">
         <h2>Kitchen & Household Uses</h2>
-        <p>${herb.uses || "No culinary instructions available."}</p>
+        <p>${herb.use || herb.uses || "No culinary instructions available."}</p>
       </section>
 
       <section style="margin-top: 1rem;">
@@ -104,15 +104,14 @@ function handleRouting() {
   }
 }
 
+// Universal search: checks all text properties inside each herb
 if (searchInput) {
   searchInput.addEventListener("input", (event) => {
     const term = event.target.value.toLowerCase().trim();
     const filtered = catalog.filter(item => {
-      const name = (item.name || "").toLowerCase();
-      const uses = (item.uses || "").toLowerCase();
-      const cycle = (item.cycle || "").toLowerCase();
-      const botanical = (item.botanical || "").toLowerCase();
-      return name.includes(term) || uses.includes(term) || cycle.includes(term) || botanical.includes(term);
+      return Object.values(item).some(val =>
+        String(val).toLowerCase().includes(term)
+      );
     });
     renderHerbs(filtered);
   });
