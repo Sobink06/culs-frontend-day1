@@ -10,9 +10,9 @@
 </head>
 <body>
   <header class="site-header">
-    <img class="logo" src="images/logo.svg" alt="" width="48" height="48">
+    <img class="logo" src="images/logo.svg" alt="Herb Garden logo" width="48" height="48">
     <p class="site-name">The Little Herb Garden</p>
-    <nav>
+    <nav aria-label="Main Navigation">
       <ul>
         <li><a href="#herbs">Herbs</a></li>
         <li><a href="#visiting">Visit</a></li>
@@ -25,35 +25,45 @@
     <section class="intro">
       <div>
         <h1>Herbs you can smell, taste and grow</h1>
-        <p>A small garden with herbs for the kitchen, for tea and for the bees.
-          See <a href="#herbs">what grows here</p>
+        <p>A small garden with herbs for the kitchen, for tea and for the bees. See <a href="#herbs">what grows here</a></p>
       </div>
-      <img class="hero" src="images/garden.svg" alt="Two raised beds full of herbs, with a bee">
+      <img class="hero" src="images/garden.svg" alt="Two raised beds full of green herbs">
     </section>
 
-    <section id="herbs">
-      <h2>What grows here</h2>
-<p><a href="basil.html">🌿 View our featured herb: Sweet Basil &rarr;</a></p>
-      <p class="count">Loading the herbs…</p>
+    <!-- Main List Section with Real-Time Search -->
+    <section id="herbs" aria-labelledby="herbs-heading">
+      <h2 id="herbs-heading">What grows here</h2>
+
+      <div class="search-filter-box" style="margin: 1.5rem 0;">
+        <label for="herb-search" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Search garden:</label>
+        <input 
+          type="search" 
+          id="herb-search" 
+          placeholder="Filter by name, use, or cycle (e.g. annual)..." 
+          style="width: 100%; max-width: 420px; padding: 0.65rem 0.8rem; font-size: 1rem; border: 1px solid var(--line); border-radius: 6px;"
+          aria-describedby="herb-count"
+        >
+      </div>
+
+      <p class="count" id="herb-count" aria-live="polite">Loading herbs...</p>
       <ul id="herbs-list" class="cards"></ul>
     </section>
 
-    <section id="visit">
+    <!-- Dynamic Single Herb Detail Section -->
+    <section id="herb-detail" hidden tabindex="-1" aria-live="polite" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+      <p><a href="#herbs" id="back-to-list-btn" class="back-link">&larr; Back to all herbs</a></p>
+      <article id="herb-detail-content"></article>
+    </section>
+
+    <section id="visiting">
       <h2>Visit</h2>
-      <p>The garden is open every day from sunrise to sunset.
-        Bring a friend, rub a leaf between your fingers, and leave the bees alone.</p>
+      <p>The garden is open every day from sunrise to sunset. Bring a friend, rub a leaf between your fingers, and leave the bees alone.</p>
     </section>
 
     <section id="about">
       <h2>About</h2>
-      <p>The garden is made up, and so is this site: a practice project for
-        <a href="https://github.com/pepe/culs-frontend-day1">Frontend Development, day 1</a>.</p>
+      <p>The garden is made up, and so is this site: a practice project for Frontend Development.</p>
     </section>
   </main>
-
-  <footer>
-    <p>Made with HTML, CSS and JavaScript.
-      <a href="https://developer.mozilla.org/">MDN</a> helped.</p>
-  </footer>
 </body>
 </html>
