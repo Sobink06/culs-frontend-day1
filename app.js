@@ -40,11 +40,16 @@ function renderHerbs(herbs) {
 async function fetchCatalog() {
   try {
     const response = await fetch("data/herbs.json");
-    if (!response.ok) throw new Error("Could not load herbs catalog.");
+    if (!response.ok) throw new Error("Could not load catalog file (404 / network error).");
     catalog = await response.json();
     renderHerbs(catalog);
   } catch (error) {
     if (countEl) countEl.textContent = "Unable to connect to server data.";
+    listEl.innerHTML = `
+      <li style="grid-column: 1 / -1; padding: 1.5rem; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px; color: #856404;">
+        <strong>Server communication error:</strong> Unable to load herbs list (${error.message}). Please check connection.
+      </li>
+    `;
     console.error(error);
   }
 }
@@ -57,13 +62,13 @@ async function loadHerbDetail(slug) {
   try {
     const response = await fetch(`data/${slug}.json`);
     if (!response.ok) {
-      throw new Error(`Data sheet for herb "${slug}" is not currently available.`);
+      throw new Error(`Data sheet for herb "${slug}" could not be found (${response.status}).`);
     }
     const herb = await response.json();
 
     detailContent.innerHTML = `
-      <h1>${herb.name}</h1>
-      <p><em>${herb.latin || herb.botanical || ""}</em> &bull; <strong>${herb.life || herb.cycle || ""}</strong></p>
+      <h1 tabindex="-1" id="detail-title">${herb.name}</h1>
+      <p><em>${herb.latin || herb.botanical || ""}</em> &bull; <strong class="tag">${herb.life || herb.cycle || ""}</strong></p>
       
       <section style="margin-top: 1.5rem;">
         <h2>About</h2>
@@ -80,16 +85,21 @@ async function loadHerbDetail(slug) {
         <p>${herb.tips || "No cultivation guidelines provided."}</p>
       </section>
     `;
-    detailSection.focus();
+    
+    // Focus management for keyboard accessibility
+    const title = document.getElementById("detail-title");
+    if (title) title.focus();
   } catch (err) {
+    // Resilient fallback for missing files, unknown herbs, or server errors
     detailContent.innerHTML = `
       <div style="padding: 1.5rem; background: #ffebee; border: 1px solid #ef5350; border-radius: 8px;">
-        <h2>Herb Information Unavailable</h2>
+        <h2 tabindex="-1" id="error-title">Herb Not Found</h2>
         <p>${err.message}</p>
-        <p><a href="#herbs">&larr; Return to main herb garden</a></p>
+        <p><a href="#herbs" id="error-back-btn">&larr; Return to main herb garden</a></p>
       </div>
     `;
-    detailSection.focus();
+    const errTitle = document.getElementById("error-title");
+    if (errTitle) errTitle.focus();
   }
 }
 
@@ -104,7 +114,7 @@ function handleRouting() {
   }
 }
 
-// Universal search: checks all text properties inside each herb
+// Search filter
 if (searchInput) {
   searchInput.addEventListener("input", (event) => {
     const term = event.target.value.toLowerCase().trim();
@@ -116,6 +126,13 @@ if (searchInput) {
     renderHerbs(filtered);
   });
 }
+
+// Keyboard navigation: Escape key returns to catalog
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !detailSection.hidden) {
+    window.location.hash = "#herbs";
+  }
+});
 
 window.addEventListener("hashchange", handleRouting);
 window.addEventListener("DOMContentLoaded", async () => {
